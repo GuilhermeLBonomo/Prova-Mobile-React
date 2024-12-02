@@ -6,40 +6,50 @@ type DiceImages = {
 };
 
 const App: React.FC = () => {
+  
   const [player1Dice, setPlayer1Dice] = useState<number>(1);
   const [player2Dice, setPlayer2Dice] = useState<number>(1);
   const [player1Score, setPlayer1Score] = useState<number>(0);
   const [player2Score, setPlayer2Score] = useState<number>(0);
   const [roundWinner, setRoundWinner] = useState<string>('');
   const [totalWinner, setTotalWinner] = useState<string>(''); 
+  const [ties, setTies] = useState<number>(0);
+
 
   const rollDice = (): void => {
     const dice1 = Math.floor(Math.random() * 6) + 1;
     const dice2 = Math.floor(Math.random() * 6) + 1;
-
+  
     setPlayer1Dice(dice1);
     setPlayer2Dice(dice2);
-
+  
+    updateScores(dice1, dice2);
+    updateTotalWinner();
+  };
+  
+  const updateScores = (dice1: number, dice2: number): void => {
     if (dice1 > dice2) {
-      setPlayer1Score(player1Score + 1);
+      setPlayer1Score((prev) => prev + 1); 
       setRoundWinner('Jogador 1');
     } else if (dice2 > dice1) {
-      setPlayer2Score(player2Score + 1);
+      setPlayer2Score((prev) => prev + 1);
       setRoundWinner('Jogador 2');
     } else {
-      setPlayer1Score(player1Score + 1);
-      setPlayer2Score(player2Score + 1);
+      setTies((prev) => prev + 1);
       setRoundWinner('Round Empatado');
     }
-
-    if (player1Score + 1 > player2Score) {
+  };
+  
+  const updateTotalWinner = (): void => {
+    if (player1Score > player2Score) {
       setTotalWinner('Jogador 1');
-    } else if (player2Score + 1 > player1Score) {
+    } else if (player2Score > player1Score) {
       setTotalWinner('Jogador 2');
-    } else if (player1Score + 1 === player2Score + 1) {
+    } else {
       setTotalWinner('EMPATADO');
     }
   };
+  
 
   const diceImages: DiceImages = {
     1: require('./assets/dice1.png'),
@@ -84,8 +94,11 @@ const App: React.FC = () => {
 
       {/* Footer */}
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Boa sorte!</Text>
+        <Text style={styles.footerText}>Jogador 1: {player1Score}</Text>
+        <Text style={styles.footerText}>Jogador 2: {player2Score}</Text>
+        <Text style={styles.footerText}>Empates: {ties}</Text>
       </View>
+
     </View>
   );
 };
